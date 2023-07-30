@@ -20,6 +20,7 @@ class SeparatorStyle(IntEnum):
     NO_COLON_TWO = auto()
     ADD_NEW_LINE_SINGLE = auto()
     LLAMA2 = auto()
+    LLAMA2CHAT = auto()
     CHATGLM = auto()
     CHATML = auto()
     CHATINTERN = auto()
@@ -118,6 +119,15 @@ class Conversation:
                     ret += role + ":"
             return ret
         elif self.sep_style == SeparatorStyle.LLAMA2:
+            ret = "<s>"
+            for i, (role, message) in enumerate(self.messages):
+                if message:
+                    if i == 0:
+                        ret += message
+                    else:
+                        ret += " " + message
+            return ret
+        elif self.sep_style == SeparatorStyle.LLAMA2CHAT:
             seps = [self.sep, self.sep2]
             ret = ""
             for i, (role, message) in enumerate(self.messages):
@@ -846,10 +856,25 @@ register_conv_template(
 )
 
 # llama2 template
-# reference: https://github.com/facebookresearch/llama/blob/cfc3fc8c1968d390eb830e65c63865e980873a06/llama/generation.py#L212
 register_conv_template(
     Conversation(
         name="llama-2",
+        system="",
+        roles=("", ""),
+        messages=(),
+        offset=0,
+        sep_style=SeparatorStyle.LLAMA2,
+        sep="",
+        sep2="",
+        stop_token_ids=[2],
+    )
+)
+
+# llama2 chat template
+# reference: https://github.com/facebookresearch/llama/blob/cfc3fc8c1968d390eb830e65c63865e980873a06/llama/generation.py#L212
+register_conv_template(
+    Conversation(
+        name="llama-2-chat",
         system="<s>[INST] <<SYS>>\nYou are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. "
         "Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. "
         "Please ensure that your responses are socially unbiased and positive in nature.\n\n"
@@ -858,7 +883,7 @@ register_conv_template(
         roles=("[INST]", "[/INST]"),
         messages=(),
         offset=0,
-        sep_style=SeparatorStyle.LLAMA2,
+        sep_style=SeparatorStyle.LLAMA2CHAT,
         sep=" ",
         sep2=" </s><s>",
         stop_token_ids=[2],

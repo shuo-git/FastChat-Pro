@@ -1158,11 +1158,27 @@ class StarChatAdapter(BaseModelAdapter):
         return get_conv_template("starchat")
 
 
+class Llama2ChatAdapter(BaseModelAdapter):
+    """The model adapter for llama-2"""
+
+    def match(self, model_path: str):
+        return "llama-2" in model_path.lower() and "chat" in model_path.lower()
+
+    def load_model(self, model_path: str, from_pretrained_kwargs: dict):
+        model, tokenizer = super().load_model(model_path, from_pretrained_kwargs)
+        model.config.eos_token_id = tokenizer.eos_token_id
+        model.config.pad_token_id = tokenizer.pad_token_id
+        return model, tokenizer
+
+    def get_default_conv_template(self, model_path: str) -> Conversation:
+        return get_conv_template("llama-2-chat")
+
+
 class Llama2Adapter(BaseModelAdapter):
     """The model adapter for llama-2"""
 
     def match(self, model_path: str):
-        return "llama-2" in model_path.lower()
+        return "llama-2" in model_path.lower() and "chat" not in model_path.lower()
 
     def load_model(self, model_path: str, from_pretrained_kwargs: dict):
         model, tokenizer = super().load_model(model_path, from_pretrained_kwargs)
@@ -1238,6 +1254,7 @@ register_model_adapter(PythiaAdapter)
 register_model_adapter(InternLMChatAdapter)
 register_model_adapter(StarChatAdapter)
 register_model_adapter(Llama2Adapter)
+register_model_adapter(Llama2ChatAdapter)
 register_model_adapter(CuteGPTAdapter)
 
 # After all adapters, try the default base adapter.
