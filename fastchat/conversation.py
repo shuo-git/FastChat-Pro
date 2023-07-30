@@ -860,7 +860,7 @@ register_conv_template(
     Conversation(
         name="llama-2",
         system="",
-        roles=("", ""),
+        roles=("User", "Assistant"),
         messages=(),
         offset=0,
         sep_style=SeparatorStyle.LLAMA2,
