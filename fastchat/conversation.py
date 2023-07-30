@@ -123,7 +123,7 @@ class Conversation:
             for i, (role, message) in enumerate(self.messages):
                 if message:
                     if i == 0:
-                        ret += self.system + message
+                        ret += self.system + message + seps[i % 2]
                     else:
                         ret += role + " " + message + seps[i % 2]
                 else:
