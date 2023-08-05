@@ -118,15 +118,6 @@ class Conversation:
                 else:
                     ret += role + ":"
             return ret
-        elif self.sep_style == SeparatorStyle.LLAMA2:
-            ret = "<s>"
-            for i, (role, message) in enumerate(self.messages):
-                if message:
-                    if i == 0:
-                        ret += message
-                    else:
-                        ret += " " + message
-            return ret
         elif self.sep_style == SeparatorStyle.LLAMA2CHAT:
             seps = [self.sep, self.sep2]
             ret = ""
@@ -852,21 +843,6 @@ register_conv_template(
         sep="",
         sep2="</s>",
         stop_token_ids=[2, 195],
-    )
-)
-
-# llama2 template
-register_conv_template(
-    Conversation(
-        name="llama-2",
-        system="",
-        roles=("User", "Assistant"),
-        messages=(),
-        offset=0,
-        sep_style=SeparatorStyle.LLAMA2,
-        sep="",
-        sep2="",
-        stop_token_ids=[2],
     )
 )
 
